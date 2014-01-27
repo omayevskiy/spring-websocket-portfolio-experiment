@@ -12,10 +12,10 @@ function ApplicationModel(stompClient) {
 
       console.log('Connected ' + frame);
       self.username(frame.headers['user-name']);
-
-      stompClient.subscribe("/app/positions", function(message) {
+      stompClient.subscribe("/user/queue/positions", function(message) {
         self.portfolio().loadPositions(JSON.parse(message.body));
       });
+      stompClient.send("/app/positions");
       stompClient.subscribe("/topic/price.stock.*", function(message) {
         self.portfolio().processQuote(JSON.parse(message.body));
       });
@@ -157,6 +157,7 @@ function TradeModel(stompClient) {
       };
     console.log(trade);
     stompClient.send("/app/trade", {}, JSON.stringify(trade));
+
     $('#trade-dialog').modal('hide');
   }
 }
